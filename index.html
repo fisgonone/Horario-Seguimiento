@@ -467,8 +467,145 @@ input,textarea,select{font-family:inherit}
 .set-full{flex-direction:column;align-items:flex-start;gap:8px}
 .ie-row{display:flex;gap:8px;flex-wrap:wrap}
 
-/* Misc */
-.sec-hdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* ================================================================
+   SCHEDULE / TIMELINE VIEW (estilo Teams)
+   ================================================================ */
+.sc-outer {
+  display:flex; flex-direction:column; gap:12px;
+}
+.sc-wrap {
+  display:flex; gap:0;
+  background:var(--bg-surface); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+  max-height:72vh; overflow-y:auto;
+}
+.sc-time-col {
+  width:52px; flex-shrink:0;
+  border-right:1px solid var(--border);
+  background:var(--bg-card);
+  position:sticky; left:0; z-index:5;
+}
+.sc-time-slot {
+  display:flex; align-items:flex-start; justify-content:flex-end;
+  padding:3px 8px 0 0;
+  border-bottom:1px solid var(--border-soft);
+  position:relative;
+}
+.sc-time-slot span {
+  font-size:10px; font-weight:600;
+  color:var(--text-3); font-variant-numeric:tabular-nums;
+  margin-top:-6px; /* align to grid line */
+  white-space:nowrap;
+}
+.sc-grid-area {
+  position:relative; flex:1; min-width:0;
+}
+.sc-grid-line {
+  position:absolute; left:0; right:0; height:1px;
+  background:var(--border); z-index:1;
+}
+.sc-grid-half {
+  position:absolute; left:0; right:0; height:1px;
+  background:var(--border-soft); z-index:1;
+  border-top:1px dashed var(--border-soft);
+}
+/* Now indicator */
+.sc-now-line {
+  position:absolute; left:0; right:0; z-index:20;
+  pointer-events:none;
+}
+.sc-now-dot {
+  position:absolute; left:-4px; top:-4px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--danger);
+}
+.sc-now-bar {
+  position:absolute; left:0; right:0; height:2px;
+  background:var(--danger); opacity:.85;
+}
+/* Task blocks */
+.sc-task {
+  position:absolute;
+  border-radius:var(--r-sm);
+  padding:5px 8px;
+  overflow:hidden;
+  cursor:pointer;
+  z-index:10;
+  transition:filter var(--tr), box-shadow var(--tr), transform var(--tr);
+  border-left:3px solid transparent;
+  box-shadow:var(--sh-sm);
+}
+.sc-task:hover {
+  filter:brightness(1.15);
+  box-shadow:var(--sh);
+  transform:translateX(2px);
+  z-index:30;
+}
+.sc-task.sc-now {
+  box-shadow:0 0 0 2px var(--accent-glow), var(--sh);
+  z-index:25;
+}
+.sc-task.sc-done { opacity:.45; }
+.sc-task.sc-done:hover { opacity:.75; }
+.sc-task-time {
+  font-size:9.5px; font-weight:700;
+  color:rgba(255,255,255,.55); margin-bottom:1px;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.sc-task-title {
+  font-size:11.5px; font-weight:600; line-height:1.3;
+  color:rgba(255,255,255,.92); overflow:hidden;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+}
+.sc-done-ic {
+  position:absolute; top:4px; right:5px;
+  font-size:11px; opacity:.7;
+}
+/* Popup detail card */
+.sc-popup {
+  position:fixed; z-index:9000;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:14px 16px;
+  width:280px; max-width:90vw;
+  box-shadow:var(--sh);
+  animation:fd .12s ease;
+}
+.sc-popup-close {
+  position:absolute; top:8px; right:10px;
+  background:transparent; color:var(--text-3);
+  font-size:16px; border:none; cursor:pointer; padding:0 3px;
+}
+.sc-popup-close:hover { color:var(--text); }
+.sc-popup-title {
+  font-size:13px; font-weight:700; line-height:1.4;
+  padding-right:20px; margin-bottom:8px;
+}
+.sc-popup-row {
+  display:flex; align-items:center; gap:7px;
+  font-size:12px; color:var(--text-2); margin-bottom:5px;
+}
+.sc-popup-actions {
+  display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;
+}
+.sc-popup-chk {
+  display:flex; align-items:center; gap:6px;
+  font-size:12.5px; cursor:pointer; color:var(--text-2);
+}
+.sc-popup-chk input { cursor:pointer; }
+
+/* Light mode adjustments for task blocks */
+.light .sc-task-time  { color:rgba(0,0,0,.45); }
+.light .sc-task-title { color:rgba(0,0,0,.85); }
+
+@media(max-width:680px) {
+  .sc-wrap { max-height:60vh; }
+  .sc-time-col { width:40px; }
+  .sc-time-slot span { font-size:9px; }
+  .sc-task-title { font-size:10.5px; }
+}
+
 .sec-title{font-size:17px;font-weight:800;letter-spacing:-.4px}
 .sec-sub{font-size:12.5px;color:var(--text-2)}
 .empty{text-align:center;padding:36px 20px;color:var(--text-3);font-size:13.5px}
@@ -546,6 +683,7 @@ input,textarea,select{font-family:inherit}
         <div class="sb-lbl">Navegación</div>
         <button class="nav-btn active" data-view="daily">   <span class="nav-icon">📅</span>Vista diaria</button>
         <button class="nav-btn"        data-view="weekly">  <span class="nav-icon">🗓</span>Vista semanal</button>
+        <button class="nav-btn"        data-view="schedule"><span class="nav-icon">🕐</span>Vista horario</button>
         <button class="nav-btn"        data-view="history"> <span class="nav-icon">📖</span>Historial</button>
         <button class="nav-btn"        data-view="metrics"> <span class="nav-icon">📊</span>Métricas</button>
         <button class="nav-btn"        data-view="settings"><span class="nav-icon">⚙️</span>Configuración</button>
@@ -594,6 +732,7 @@ input,textarea,select{font-family:inherit}
       </div>
       <div id="v-daily"   class="vpanel"></div>
       <div id="v-weekly"  class="vpanel" style="display:none"></div>
+      <div id="v-schedule"class="vpanel" style="display:none"></div>
       <div id="v-history" class="vpanel" style="display:none"></div>
       <div id="v-metrics" class="vpanel" style="display:none"></div>
       <div id="v-settings"class="vpanel" style="display:none"></div>
@@ -607,8 +746,8 @@ input,textarea,select{font-family:inherit}
 /* ================================================================
    ⚠️  CONFIGURACIÓN – Reemplaza con tus credenciales de Supabase
    ================================================================ */
-const SUPABASE_URL      = 'https://ldtyuukweulipoosokmo.supabase.co';       // ej: https://abcdef.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkdHl1dWt3ZXVsaXBvb3Nva21vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTk5NDEsImV4cCI6MjA4Njk5NTk0MX0.TYQEC6-gLs0d7TJR83IjZzlF585V2OZDCLWJ_ZMt9bA';  // ej: eyJhbGciOiJIUzI1NiIs...
+const SUPABASE_URL      = 'TU_SUPABASE_URL';       // ej: https://abcdef.supabase.co
+const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';  // ej: eyJhbGciOiJIUzI1NiIs...
 
 /* ================================================================
    SUPABASE CLIENT
@@ -761,6 +900,11 @@ async function loadSettings() {
   if (data?.settings) {
     CFG = Object.assign(CFG, data.settings);
   }
+  // Sanitize after loading — prevents a bad saved date from breaking the app
+  if (!isValidISO(CFG.curDate))    CFG.curDate    = todayISO();
+  if (!isValidISO(CFG.startDate))  CFG.startDate  = todayISO();
+  const validViews = ['daily','weekly','schedule','history','metrics','settings'];
+  if (!validViews.includes(CFG.activeView)) CFG.activeView = 'daily';
 }
 
 async function saveSettings() {
@@ -776,10 +920,20 @@ async function saveSettings() {
    DATE UTILITIES
    ================================================================ */
 function todayISO() { return new Date().toISOString().slice(0,10); }
-function isoToDate(iso) { const [y,m,d]=iso.split('-').map(Number); return new Date(y,m-1,d); }
+
+// Validate YYYY-MM-DD before using — fixes the date-picker partial-input bug
+function isValidISO(iso) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const d = new Date(iso + 'T00:00:00');
+  return !isNaN(d.getTime());
+}
+// Safe wrapper — returns today if iso is invalid
+function safeISO(iso) { return isValidISO(iso) ? iso : todayISO(); }
+
+function isoToDate(iso) { const [y,m,d]=safeISO(iso).split('-').map(Number); return new Date(y,m-1,d); }
 function dateToISO(d) { return d.toISOString().slice(0,10); }
-function addDays(iso,n) { const d=isoToDate(iso); d.setDate(d.getDate()+n); return dateToISO(d); }
-function dowOfISO(iso) { const wd=isoToDate(iso).getDay(); return (wd===0||wd===6)?-1:wd-1; }
+function addDays(iso,n) { const d=isoToDate(safeISO(iso)); d.setDate(d.getDate()+n); return dateToISO(d); }
+function dowOfISO(iso) { if(!isValidISO(iso)) return -1; const wd=isoToDate(iso).getDay(); return (wd===0||wd===6)?-1:wd-1; }
 function isWeekend(iso) { return dowOfISO(iso)===-1; }
 function isToday(iso) { return iso===todayISO(); }
 function isFuture(iso) { return iso>todayISO(); }
@@ -868,6 +1022,11 @@ async function renderDaily() {
   const c = document.getElementById('v-daily');
   c.innerHTML = loadingHtml();
 
+  // ── BUG FIX: sanitize date before doing anything ──
+  if (!isValidISO(CFG.curDate)) {
+    CFG.curDate = todayISO();
+    await saveSettings();
+  }
   const iso = CFG.curDate;
   const dow = dowOfISO(iso);
   const isWE = dow===-1;
@@ -973,7 +1132,10 @@ function attachDailyEvents(iso){
     CFG.curDate=d; saveSettings(); await renderDaily(); updateWeekBadge();
   });
   c.querySelector('#date-picker-input')?.addEventListener('change',async e=>{
-    CFG.curDate=e.target.value; saveSettings(); await renderDaily(); updateWeekBadge();
+    const val = e.target.value;
+    // Only accept a complete, valid YYYY-MM-DD — ignores partial values typed by hand
+    if (!isValidISO(val)) return;
+    CFG.curDate=val; saveSettings(); await renderDaily(); updateWeekBadge();
   });
   c.querySelectorAll('.day-dot').forEach(btn=>{
     btn.addEventListener('click',async()=>{
@@ -1119,8 +1281,276 @@ async function renderWeekly(){
 }
 
 /* ================================================================
-   RENDER: HISTORY VIEW
+   RENDER: SCHEDULE VIEW (Vista Horario – estilo Teams)
    ================================================================ */
+async function renderSchedule(){
+  const c = document.getElementById('v-schedule');
+  c.innerHTML = loadingHtml('Cargando horario…');
+
+  // Sanitize date
+  if (!isValidISO(CFG.curDate)) { CFG.curDate = todayISO(); await saveSettings(); }
+  const iso = CFG.curDate;
+  const dow = dowOfISO(iso);
+  const isWE = dow === -1;
+
+  // Load data for the current week
+  const wMon = weekStart(iso);
+  const weekDates = Array.from({length:5},(_,i)=>addDays(wMon,i));
+  await loadStatesForDates(isWE ? [] : weekDates);
+
+  // Grid constants
+  const GRID_START = 8 * 60;     // 08:00
+  const GRID_END   = 18 * 60;    // 18:00
+  const HOUR_PX    = 90;         // pixels per hour
+  const HALF_PX    = HOUR_PX/2;
+  const TOTAL_H    = (GRID_END - GRID_START) / 60 * HOUR_PX;
+
+  const tasks = isWE ? [] : sortByTime(tasksForDate(iso));
+
+  // ── Day dots ──
+  let dots = `<div class="day-dot-row">`;
+  for(let i=0;i<5;i++){
+    const d=weekDates[i]; const p=dayPct(d);
+    const sel=d===iso; const tod=isToday(d);
+    dots+=`<button class="day-dot ${sel?'selected':''} ${tod?'today':''}" data-date="${d}" title="${DAYS_ES[i]} ${fmtShort(d)} – ${p}%">${DAYS_SH[i]}${!isFuture(d)&&p>0?`<span class="dot-bar" style="width:${Math.round(p*12/100)}px;max-width:12px"></span>`:''}</button>`;
+  }
+  dots+=`</div>`;
+
+  if (isWE) {
+    c.innerHTML=`
+      <div class="sec-hdr"><span class="sec-title">Vista Horario</span><span class="sec-sub">${fmtDate(iso)}</span></div>
+      <div class="date-nav">
+        <button class="date-nav-arrow" id="sch-prev">◀</button>
+        <div class="date-nav-main"><div class="date-nav-title">Fin de semana, ${fmtShort(iso)}</div></div>
+        ${dots}
+        <input type="date" id="sch-date" value="${iso}"/>
+        <button class="date-nav-arrow" id="sch-next">▶</button>
+      </div>
+      <div class="empty"><div class="ico">🌴</div>Fin de semana – sin tareas programadas.</div>`;
+    attachScheduleNav(iso); return;
+  }
+
+  // ── Assign columns for overlapping tasks ──
+  const colEnds = [];
+  const taskCols = tasks.map(t=>{
+    const start=parseTime(t.st), end=parseTime(t.et);
+    let col=0;
+    for(let i=0;i<colEnds.length;i++){ if(colEnds[i]<=start){col=i;colEnds[i]=end;break;} col=colEnds.length; }
+    if(col===colEnds.length) colEnds.push(end); else colEnds[col]=end;
+    return col;
+  });
+  const maxCols = Math.max(1,...taskCols.map(c=>c+1));
+
+  // ── Hour grid lines ──
+  let gridLines='';
+  for(let min=GRID_START; min<=GRID_END; min+=30){
+    const top=((min-GRID_START)/60)*HOUR_PX;
+    const isHour=(min%60===0);
+    gridLines+=`<div class="${isHour?'sc-grid-line':'sc-grid-half'}" style="top:${top}px"></div>`;
+  }
+
+  // ── Now indicator ──
+  const now=new Date();
+  const nowMin=now.getHours()*60+now.getMinutes();
+  let nowLine='';
+  if(isToday(iso) && nowMin>=GRID_START && nowMin<=GRID_END){
+    const nowTop=((nowMin-GRID_START)/60)*HOUR_PX;
+    nowLine=`<div class="sc-now-line" style="top:${nowTop}px" id="sc-now-line">
+      <span class="sc-now-dot"></span><div class="sc-now-bar"></div>
+    </div>`;
+  }
+
+  // ── Task blocks ──
+  let blocks='';
+  tasks.forEach((t,i)=>{
+    const start=parseTime(t.st), end=parseTime(t.et);
+    const clampS=Math.max(start,GRID_START), clampE=Math.min(end,GRID_END);
+    if(clampS>=clampE) return;
+    const top=((clampS-GRID_START)/60)*HOUR_PX;
+    const height=Math.max(((clampE-clampS)/60)*HOUR_PX, 22);
+    const col=taskCols[i];
+    const colW=100/maxCols;
+    const s=gs(t.id,iso);
+    const isNow=isNowTask(t,iso);
+    const color=catColor(t.cat);
+    // Build background with tinted color + dark overlay
+    const bgColor=`color-mix(in srgb, ${color} 18%, var(--bg-card))`;
+    blocks+=`<div class="sc-task ${s.done?'sc-done':''} ${isNow?'sc-now':''}"
+      style="top:${top}px;height:${height}px;left:calc(${col*colW}% + 3px);width:calc(${colW}% - 6px);border-left-color:${color};background:${bgColor}"
+      data-id="${t.id}" data-iso="${iso}" data-taskidx="${i}"
+      role="button" tabindex="0" aria-label="${t.st}–${t.et}: ${t.title}">
+      ${height>18?`<div class="sc-task-time">${t.st}–${t.et}</div>`:''}
+      <div class="sc-task-title">${t.title}</div>
+      ${s.done?`<div class="sc-done-ic">✓</div>`:''}
+    </div>`;
+  });
+
+  // ── Left time column ──
+  let timeSlots='';
+  for(let h=GRID_START/60; h<=GRID_END/60; h++){
+    timeSlots+=`<div class="sc-time-slot" style="height:${HOUR_PX}px"><span>${h.toString().padStart(2,'0')}:00</span></div>`;
+  }
+
+  const pct=dayPct(iso);
+  const doneC=tasks.filter(t=>gs(t.id,iso).done).length;
+
+  c.innerHTML=`
+    <div class="sc-outer">
+      <div class="sec-hdr">
+        <span class="sec-title">🕐 Vista Horario</span>
+        <span class="sec-sub">${DAYS_ES[dow]}, ${fmtDate(iso)}</span>
+        <span style="padding:3px 10px;border-radius:20px;background:var(--accent-glow);border:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--accent)">${doneC}/${tasks.length}</span>
+      </div>
+      <div class="date-nav">
+        <button class="date-nav-arrow" id="sch-prev">◀</button>
+        <div class="date-nav-main">
+          <div class="date-nav-title">${DAYS_ES[dow]}, ${fmtShort(iso)}</div>
+          <div class="date-nav-sub">Semana <b>${Math.max(1,weekNum(iso))}</b></div>
+        </div>
+        ${dots}
+        <input type="date" id="sch-date" value="${iso}"/>
+        <button class="date-nav-arrow" id="sch-next">▶</button>
+      </div>
+      <div class="prog-strip">
+        <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+        <span class="prog-label">${pct}% completado</span>
+      </div>
+      <div class="sc-wrap" id="sc-wrap">
+        <div class="sc-time-col">${timeSlots}</div>
+        <div class="sc-grid-area" style="height:${TOTAL_H+HOUR_PX}px" id="sc-grid">
+          ${gridLines}${nowLine}${blocks}
+        </div>
+      </div>
+    </div>
+    <div id="sc-popup" class="sc-popup" style="display:none"></div>`;
+
+  attachScheduleNav(iso);
+
+  // ── Task block click → popup ──
+  c.querySelectorAll('.sc-task').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id=el.dataset.id; const elIso=el.dataset.iso;
+      const task=TASKS.find(t=>t.id===id); if(!task) return;
+      const s=gs(id,elIso);
+      showSchedulePopup(task, elIso, s, el);
+    });
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') el.click(); });
+  });
+
+  // Close popup on outside click
+  document.addEventListener('click', ()=>{ const p=document.getElementById('sc-popup'); if(p) p.style.display='none'; }, {once:true});
+
+  // Scroll to current task or 8:30
+  setTimeout(()=>{
+    const wrap=document.getElementById('sc-wrap');
+    if(!wrap) return;
+    const now2=document.getElementById('sc-now-line');
+    if(now2) wrap.scrollTop=Math.max(0,now2.offsetTop-80);
+    else wrap.scrollTop=HALF_PX; // scroll to 08:30
+  },80);
+
+  // Auto-refresh now line every 30s
+  clearInterval(window._scNowTimer);
+  window._scNowTimer=setInterval(()=>{
+    if(CFG.activeView!=='schedule'||!isToday(iso)) { clearInterval(window._scNowTimer); return; }
+    const nowM=new Date().getHours()*60+new Date().getMinutes();
+    const nowT=((nowM-GRID_START)/60)*HOUR_PX;
+    const line=document.getElementById('sc-now-line');
+    if(line) line.style.top=nowT+'px';
+  },30000);
+}
+
+function attachScheduleNav(iso){
+  const c=document.getElementById('v-schedule'); if(!c) return;
+  c.querySelector('#sch-prev')?.addEventListener('click',async()=>{
+    let d=addDays(iso,-1); while(isWeekend(d))d=addDays(d,-1);
+    CFG.curDate=d; saveSettings(); await renderSchedule(); updateWeekBadge();
+  });
+  c.querySelector('#sch-next')?.addEventListener('click',async()=>{
+    let d=addDays(iso,1); while(isWeekend(d))d=addDays(d,1);
+    CFG.curDate=d; saveSettings(); await renderSchedule(); updateWeekBadge();
+  });
+  c.querySelector('#sch-date')?.addEventListener('change',async e=>{
+    const val=e.target.value;
+    if(!isValidISO(val)) return;  // ignore partial values
+    CFG.curDate=val; saveSettings(); await renderSchedule(); updateWeekBadge();
+  });
+  c.querySelectorAll('.day-dot').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      CFG.curDate=btn.dataset.date; saveSettings(); await renderSchedule(); updateWeekBadge();
+    });
+  });
+}
+
+function showSchedulePopup(task, iso, taskState, anchorEl){
+  const popup=document.getElementById('sc-popup'); if(!popup) return;
+
+  const clHtml = task.cl?.length ? task.cl.map((item,ci)=>`
+    <label class="sc-popup-chk">
+      <input type="checkbox" class="sc-popup-sub" data-id="${task.id}" data-iso="${iso}" data-ci="${ci}" ${taskState.cl?.[ci]?'checked':''}/>
+      <span>${item}</span>
+    </label>`).join('') : '';
+
+  popup.innerHTML=`
+    <button class="sc-popup-close" id="sc-popup-close">✕</button>
+    <div class="sc-popup-title">${task.title}</div>
+    <div class="sc-popup-row">
+      <span>⏰</span><span>${task.st}–${task.et}</span>
+      <span class="cat-badge ${catCls(task.cat)}">${task.cat}</span>
+      ${task.opt?`<span class="opt-badge">Opcional</span>`:''}
+    </div>
+    <div class="sc-popup-row" style="color:var(--text-2);font-size:12px;flex-direction:column;align-items:flex-start;gap:3px">${task.desc}</div>
+    ${clHtml ? `<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">${clHtml}</div>` : ''}
+    <div class="sc-popup-actions">
+      <label class="sc-popup-chk" style="font-weight:600;color:var(--text)">
+        <input type="checkbox" id="sc-popup-done" ${taskState.done?'checked':''}/>
+        <span>${taskState.done?'✅ Completado':'Marcar como hecho'}</span>
+      </label>
+    </div>
+    <select id="sc-popup-status" class="tc-status" style="margin-top:8px;width:100%" data-v="${taskState.status}">
+      <option value="pendiente" ${taskState.status==='pendiente'?'selected':''}>Pendiente</option>
+      <option value="en-progreso" ${taskState.status==='en-progreso'?'selected':''}>En progreso</option>
+      <option value="hecho" ${taskState.status==='hecho'?'selected':''}>Hecho</option>
+    </select>`;
+
+  // Position popup near anchor
+  const rect=anchorEl.getBoundingClientRect();
+  const pw=280;
+  let left=rect.right+8;
+  if(left+pw>window.innerWidth-10) left=rect.left-pw-8;
+  if(left<8) left=8;
+  let top=rect.top;
+  if(top+240>window.innerHeight-10) top=window.innerHeight-250;
+  popup.style.cssText=`display:block;left:${left}px;top:${top}px`;
+
+  // Popup events
+  popup.querySelector('#sc-popup-close').addEventListener('click',e=>{ e.stopPropagation(); popup.style.display='none'; });
+  popup.querySelector('#sc-popup-done').addEventListener('change',async e=>{
+    e.stopPropagation();
+    const s=gs(task.id,iso); s.done=e.target.checked; s.status=s.done?'hecho':'pendiente';
+    await saveTaskState(task.id,iso);
+    await renderSchedule();
+  });
+  popup.querySelector('#sc-popup-status').addEventListener('change',async e=>{
+    e.stopPropagation();
+    const s=gs(task.id,iso); s.status=e.target.value; s.done=(s.status==='hecho');
+    await saveTaskState(task.id,iso);
+    await renderSchedule();
+  });
+  popup.querySelectorAll('.sc-popup-sub').forEach(cb=>{
+    cb.addEventListener('change',async e=>{
+      e.stopPropagation();
+      const s=gs(e.target.dataset.id,e.target.dataset.iso);
+      if(!s.cl) s.cl=[];
+      s.cl[parseInt(e.target.dataset.ci)]=e.target.checked;
+      await saveTaskState(e.target.dataset.id,e.target.dataset.iso);
+    });
+  });
+  popup.addEventListener('click',e=>e.stopPropagation());
+}
+
+
 async function renderHistory(){
   const c=document.getElementById('v-history');
   c.innerHTML=loadingHtml('Cargando historial…');
@@ -1409,13 +1839,18 @@ function renderSettings(){
 async function renderCurrent(){
   const v=CFG.activeView;
   document.querySelectorAll('.vpanel').forEach(p=>p.style.display='none');
-  document.getElementById(`v-${v}`).style.display='block';
-  document.querySelectorAll('.nav-btn,.vtab').forEach(el=>el.classList.toggle('active',el.dataset.view===v));
-  if(v==='daily')    await renderDaily();
-  else if(v==='weekly')   await renderWeekly();
-  else if(v==='history')  await renderHistory();
-  else if(v==='metrics')  await renderMetrics();
-  else if(v==='settings') renderSettings();
+  // Guard: if the view panel doesn't exist, fall back to daily
+  const panel=document.getElementById(`v-${v}`);
+  if(!panel){ CFG.activeView='daily'; }
+  const safeV=CFG.activeView;
+  document.getElementById(`v-${safeV}`).style.display='block';
+  document.querySelectorAll('.nav-btn,.vtab').forEach(el=>el.classList.toggle('active',el.dataset.view===safeV));
+  if(safeV==='daily')    await renderDaily();
+  else if(safeV==='weekly')   await renderWeekly();
+  else if(safeV==='schedule') await renderSchedule();
+  else if(safeV==='history')  await renderHistory();
+  else if(safeV==='metrics')  await renderMetrics();
+  else if(safeV==='settings') renderSettings();
 }
 
 async function setView(v){ CFG.activeView=v; await saveSettings(); await renderCurrent(); updateWeekBadge(); }
